@@ -16,7 +16,7 @@ public class ControlFlow {
 	  int j = 0;
 	  
 	  while (j < charArray.length)	{
-		  Syste,.out.println(charArray[j++]);
+		  System,.out.println(charArray[j++]);
 	  }
 	  /* do...while loop */
 	  /* prints 3
