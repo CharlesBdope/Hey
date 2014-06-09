@@ -99,8 +99,15 @@ public class MainActivity extends SimpleBaseGameActivity implements IAcceleratio
 	@Override   
 	public void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
+		BuildableBitmapTextureAtlas mBitmapTextureAtlas = new BuildableBitmapTextureAtlas (mEngine.getTextureManager(), 256, 256, TextureOptions.BILINEAR);
+		mSpriteTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBitmapTextureAtlas, this, "Molesheet.png");
+		mBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 1, 1)); {
+			catch (TextureAtlasBuilderException e) {
+				e.printStackTrace();
+			}
+			mBitmapTextureAtlas.load();
 
-		this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 64, 128, TextureOptions.BILINEAR);
+		//this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 64, 128, TextureOptions.BILINEAR);
 		//this.mBoxFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_box_tiled.png", 0, 0, 2, 1); // 64x32
 		//this.mCircleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_circle_tiled.png", 0, 32, 2, 1); // 64x32
 		//this.mTriangleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_triangle_tiled.png", 0, 64, 2, 1); // 64x32
@@ -128,16 +135,21 @@ public class MainActivity extends SimpleBaseGameActivity implements IAcceleratio
 		 * 
 		 */
 		
+		// Hitbox / Touch area of Mole
+		final Rectangle mole1 = new Rectangle( ((CAMERA_WIDTH / 2) - 64 ), ((CAMERA_Height / 2) + 64 ) 2, vertexBufferObjectManager )
+		final Rectangle mole2 = new Rectangle( ((CAMERA_WIDTH / 2) + 64 ), ((CAMERA_Height / 2) - 64 ) 2, vertexBufferObjectManager )
+		final Rectangle mole3 = new Rectangle( ((CAMERA_WIDTH / 2) + 64 ), ((CAMERA_Height / 2) + 64 ) 2, vertexBufferObjectManager )
+		final Rectangle mole4 = new Rectangle( ((CAMERA_WIDTH / 2) - 64 ), ((CAMERA_Height / 2) - 64 ) 2, vertexBufferObjectManager )
 /*
 		this.mPhysicsWorld = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_EARTH), false);
-
+*/
 		final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
 		final Rectangle ground = new Rectangle(0, CAMERA_HEIGHT - 2, CAMERA_WIDTH, 2, vertexBufferObjectManager);
 		final Rectangle roof = new Rectangle(0, 0, CAMERA_WIDTH, 2, vertexBufferObjectManager);
 		final Rectangle left = new Rectangle(0, 0, 2, CAMERA_HEIGHT, vertexBufferObjectManager);
 		final Rectangle right = new Rectangle(CAMERA_WIDTH - 2, 0, 2, CAMERA_HEIGHT, vertexBufferObjectManager);
 		final Rectangle shelf = new Rectangle(300, 200, 100, 2, vertexBufferObjectManager);
-		
+/*		
 		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.5f, 0.5f);
 		PhysicsFactory.createBoxBody(this.mPhysicsWorld, ground, BodyType.StaticBody, wallFixtureDef);
 		PhysicsFactory.createBoxBody(this.mPhysicsWorld, roof, BodyType.StaticBody, wallFixtureDef);
@@ -145,10 +157,10 @@ public class MainActivity extends SimpleBaseGameActivity implements IAcceleratio
 		PhysicsFactory.createBoxBody(this.mPhysicsWorld, right, BodyType.StaticBody, wallFixtureDef);
 		PhysicsFactory.createBoxBody(this.mPhysicsWorld, shelf, BodyType.StaticBody, wallFixtureDef);
 */
-		this.mScene.attachChild(ground);
-		this.mScene.attachChild(roof);
-		this.mScene.attachChild(left);
-		this.mScene.attachChild(right);
+		this.mScene.attachChild(mole1);
+		this.mScene.attachChild(mole2);
+		this.mScene.attachChild(mole3);
+		this.mScene.attachChild(mole4);
 
 		this.mScene.registerUpdateHandler(this.mPhysicsWorld);
 //TODO DEBUG DRAW DEBUGDRAW - TOGGLE ON OFF  	 		
@@ -224,6 +236,13 @@ public class MainActivity extends SimpleBaseGameActivity implements IAcceleratio
 		this.mScene.attachChild(face);
 		this.mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(face, body, true, true));
 	}
+	
+	@Override
+	protected void onManagedUpdate( float pSecondsElapsed) {
+		super.onManagedUpdate(pSecondsElapsed);
+	}
+	
+	
 
 	/**
 	 * Creates a {@link Body} based on a {@link PolygonShape} in the form of a triangle:
